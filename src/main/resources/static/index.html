@@ -1,21 +1,32 @@
+<!DOCTYPE html>
 <html>
 <head>
-	<title>Test</title>
+	<title>WebSocket Car</title>
+	<script src="https://unpkg.com/vue@2.6.14"></script>
 	<script src="https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-	<script src="https://unpkg.com/vue"></script>
 </head>
 <body>
 	<div id="app">
-		<h1>Stock Price</h1>		
+		<h1>WebSocket Car</h1>
 		<div>
 		<ul>
-			<li v-for="m in list1">{{m.name}}: {{m.price}}</li>
+			<li v-for="m in list1">{{m.name}}: {{m.power}}</li>
 		</ul>
 		</div>
 		<div>
 		<ul>
-			<li v-for="m in list2">{{m.name}}: {{m.price}}</li>
+			<li v-for="m in list2">{{m.name}}: {{m.power}}</li>
+		</ul>
+		</div>
+		<div>
+		<ul>
+			<li v-for="m in list3">{{m.name}}: {{m.power}}</li>
+		</ul>
+		</div>
+		<div>
+		<ul>
+			<li v-for="m in list4">{{m.name}}: {{m.power}}</li>
 		</ul>
 		</div>
 	</div>
@@ -23,32 +34,57 @@
 <script>
 
 let stompClient = null;
+let stompClient2 = null;
 
 var vm = new Vue({
 	el: '#app',
-	mounted: function () {		
-		this.$nextTick(function () {			
+	mounted: function () {
+		this.$nextTick(function () {
 			let socket = new SockJS('/test-info');
 		    stompClient = Stomp.over(socket);
-		    stompClient.connect({}, function (frame) {		    	
+		    stompClient.connect({}, function (frame) {
 		        console.log('Connected: ' + frame);
-		        
-		        stompClient.subscribe('/stock/price', function (val) {		        	
+
+		        stompClient.subscribe('/location/car1', function (val) {
 		        	console.log(val);
-		        	console.log(JSON.parse(val.body));					
+		        	console.log(JSON.parse(val.body));
 					vm.list1 = JSON.parse(val.body);
 		        });
 		    });
-		    
+
 		    let socket2 = new SockJS('/test-info');
 		    stompClient2 = Stomp.over(socket2);
-		    stompClient2.connect({}, function (frame) {		    	
-		        console.log('Connected: ' + frame);		       		      
-		        
-		        stompClient2.subscribe('/stock/price-fast', function (val) {		        	
+		    stompClient2.connect({}, function (frame) {
+		        console.log('Connected: ' + frame);
+
+		        stompClient2.subscribe('/location/car2', function (val) {
 		        	console.log(val);
-		        	console.log(JSON.parse(val.body));					
+		        	console.log(JSON.parse(val.body));
 					vm.list2 = JSON.parse(val.body);
+		        });
+		    });
+
+		    let socket3 = new SockJS('/test-info');
+		    stompClient3 = Stomp.over(socket3);
+		    stompClient3.connect({}, function (frame) {
+		        console.log('Connected: ' + frame);
+
+		        stompClient3.subscribe('/location/car3', function (val) {
+		        	console.log(val);
+		        	console.log(JSON.parse(val.body));
+					vm.list3 = JSON.parse(val.body);
+		        });
+		    });
+
+		    let socket4 = new SockJS('/test-info');
+		    stompClient4 = Stomp.over(socket4);
+		    stompClient4.connect({}, function (frame) {
+		        console.log('Connected: ' + frame);
+
+		        stompClient4.subscribe('/location/car4', function (val) {
+		        	console.log(val);
+		        	console.log(JSON.parse(val.body));
+					vm.list4 = JSON.parse(val.body);
 		        });
 		    });
 		});
