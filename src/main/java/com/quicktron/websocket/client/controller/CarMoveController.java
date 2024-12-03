@@ -17,6 +17,7 @@ import org.springframework.web.socket.WebSocketSession;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -69,9 +70,13 @@ public class CarMoveController {
         for (WebSocketSession session : sessions) {
             if (session.isOpen()) {
                 try {
-                    AGVEntity agvEntity = AGVEntity.getRandom();
+                    List<AGVEntity> agvList = new ArrayList<>();
+                    for (int i = 0; i < 100; i++) {
+                        AGVEntity agvEntity = AGVEntity.getRandom();
+                        agvList.add(agvEntity);
+                    }
                     ObjectMapper objectMapper = new ObjectMapper();
-                    String agvJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(agvEntity);
+                    String agvJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(agvList);
                     session.sendMessage(new TextMessage(agvJson));
                 } catch (IOException e) {
                     e.printStackTrace();

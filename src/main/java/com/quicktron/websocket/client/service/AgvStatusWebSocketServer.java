@@ -2,6 +2,7 @@ package com.quicktron.websocket.client.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quicktron.websocket.dto.AGVEntity;
+import org.apache.tomcat.websocket.server.UriTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -9,13 +10,16 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import javax.websocket.DeploymentException;
+import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-@ServerEndpoint("/websocket/agvStatus/**")
+@ServerEndpoint("/websocket/agvStatus//{carId}")
 public class AgvStatusWebSocketServer extends TextWebSocketHandler {
 
     private static final Set<WebSocketSession> sessions = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -27,7 +31,8 @@ public class AgvStatusWebSocketServer extends TextWebSocketHandler {
         // 获取stationCode
         String stationCode = getStationCode();
         // 发送初始化消息
-        TextMessage textMessage = new TextMessage("this is agv init data for station: " + stationCode);
+        String carId = getCarId(session);
+        TextMessage textMessage = new TextMessage("this is agv init data for station: " + stationCode + " carId: "+carId);
         AGVEntity agvEntity = AGVEntity.getRandom();
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -65,5 +70,18 @@ public class AgvStatusWebSocketServer extends TextWebSocketHandler {
 
     private String getStationCode() {
         return "station101";
+    }
+
+    private String getCarId(WebSocketSession session) throws DeploymentException {
+        // 定义UriTemplate来匹配WebSocket连接的URI
+        UriTemplate uriTemplate = new UriTemplate("/websocket/agvStatus/{carId}");
+
+        // 获取WebSocketSession的URI
+        String uri = session.getUri().toString();
+
+        // 解析URI以获取路径参数
+        Map<String, String> variables = uriTemplate.match(uriTemplate);
+        String carId = variables.get("carId");
+        return carId;
     }
 }
