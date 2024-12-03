@@ -1,103 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>WebSocket Car</title>
-	<script src="https://unpkg.com/vue@2.6.14"></script>
-	<script src="https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>WebSocket Client</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 20px;
+		}
+		#messages {
+			border: 1px solid #ccc;
+			padding: 10px;
+			height: 200px;
+			overflow-y: scroll;
+			margin-bottom: 10px;
+		}
+		#messageInput {
+			width: calc(100% - 110px);
+			padding: 5px;
+		}
+		#sendButton {
+			padding: 5px 10px;
+		}
+	</style>
 </head>
 <body>
-	<div id="app">
-		<h1>WebSocket Car</h1>
-		<div>
-		<ul>
-			<li v-for="m in list1">{{m.name}}: {{m.power}}</li>
-		</ul>
-		</div>
-		<div>
-		<ul>
-			<li v-for="m in list2">{{m.name}}: {{m.power}}</li>
-		</ul>
-		</div>
-		<div>
-		<ul>
-			<li v-for="m in list3">{{m.name}}: {{m.power}}</li>
-		</ul>
-		</div>
-		<div>
-		<ul>
-			<li v-for="m in list4">{{m.name}}: {{m.power}}</li>
-		</ul>
-		</div>
-	</div>
-</body>
+<h1>WebSocket Client</h1>
+<div id="messages"></div>
+<input type="text" id="messageInput" placeholder="Type a message...">
+<button id="sendButton">Send</button>
+
 <script>
+	const messagesDiv = document.getElementById('messages');
+	const messageInput = document.getElementById('messageInput');
+	const sendButton = document.getElementById('sendButton');
 
-let stompClient = null;
-let stompClient2 = null;
-let stompClient3 = null;
-let stompClient4 = null;
+	let socket;
 
-var vm = new Vue({
-	el: '#app',
-	mounted: function () {
-		this.$nextTick(function () {
-			let socket = new SockJS('/test-info');
-		    stompClient = Stomp.over(socket);
-		    stompClient.connect({}, function (frame) {
-		        console.log('Connected: ' + frame);
-
-		        stompClient.subscribe('/location/car1', function (val) {
-		        	console.log(val);
-		        	console.log(JSON.parse(val.body));
-					vm.list1 = JSON.parse(val.body);
-		        });
-		    });
-
-		    let socket2 = new SockJS('/test-info');
-		    stompClient2 = Stomp.over(socket2);
-		    stompClient2.connect({}, function (frame) {
-		        console.log('Connected: ' + frame);
-
-		        stompClient2.subscribe('/location/car2', function (val) {
-		        	console.log(val);
-		        	console.log(JSON.parse(val.body));
-					vm.list2 = JSON.parse(val.body);
-		        });
-		    });
-
-		    let socket3 = new SockJS('/test-info');
-		    stompClient3 = Stomp.over(socket3);
-		    stompClient3.connect({}, function (frame) {
-		        console.log('Connected: ' + frame);
-
-		        stompClient3.subscribe('/location/car3', function (val) {
-		        	console.log(val);
-		        	console.log(JSON.parse(val.body));
-					vm.list3 = JSON.parse(val.body);
-		        });
-		    });
-
-		    let socket4 = new SockJS('/test-info');
-		    stompClient4 = Stomp.over(socket4);
-		    stompClient4.connect({}, function (frame) {
-		        console.log('Connected: ' + frame);
-
-		        stompClient4.subscribe('/location/car4', function (val) {
-		        	console.log(val);
-		        	console.log(JSON.parse(val.body));
-					vm.list4 = JSON.parse(val.body);
-		        });
-		    });
-		});
-	},
-	data: function () {
-		return {
-	   		message: 'Dynamic Content',
-	   		list1: [],
-	   		list2: []
-		}
+	function appendMessage(message) {
+		const messageElement = document.createElement('div');
+		messageElement.textContent = message;
+		messagesDiv.appendChild(messageElement);
+		messagesDiv.scrollTop = messagesDiv.scrollHeight;
 	}
-})
+
+	function connectWebSocket() {
+		// Replace 'localhost' with your server's address if different
+		socket = new WebSocket('ws://localhost:8080/websocket');
+		socketAgv = new WebSocket('ws://localhost:8080/websocket/agvStatus/**');
+
+		socket.onopen = function(event) {
+			appendMessage('Connected to WebSocket server.');
+		};
+
+		socketAgv.onopen = function(event) {
+			appendMessage('Connected to socketAgv server.');
+		};
+
+		socket.onmessage = function(event) {
+			appendMessage('Received: ' + event.data);
+		};
+
+		socketAgv.onmessage = function(event) {
+			appendMessage('Received socketAgv: ' + event.data);
+		};
+
+		socket.onclose = function(event) {
+			appendMessage('Disconnected from WebSocket server.');
+		};
+
+		socketAgv.onclose = function(event) {
+			appendMessage('Disconnected from socketAgv WebSocket server.');
+		};
+
+		socket.onerror = function(error) {
+			appendMessage('WebSocket error: ' + error);
+		};
+
+		socketAgv.onerror = function(error) {
+			appendMessage('socketAgv WebSocket error: ' + error);
+		};
+	}
+
+	sendButton.onclick = function() {
+		const message = messageInput.value;
+		if (message) {
+			socket.send(message);
+			appendMessage('Sent: ' + message);
+			messageInput.value = '';
+		}
+	};
+
+	// Connect to WebSocket server when the page loads
+	window.onload = connectWebSocket;
 </script>
+</body>
 </html>

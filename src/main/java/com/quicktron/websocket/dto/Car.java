@@ -3,9 +3,9 @@ package com.quicktron.websocket.dto;
 public class Car {
 
 	private String name;
-	
+
 	private Double power;
-	
+
 	public Car(String name, Double power) {
 		this.name = name;
 		this.power = power;
