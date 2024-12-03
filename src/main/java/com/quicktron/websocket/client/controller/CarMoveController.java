@@ -1,7 +1,9 @@
 package com.quicktron.websocket.client.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quicktron.websocket.client.service.AgvStatusWebSocketServer;
 import com.quicktron.websocket.client.service.UserWebSocketServer;
+import com.quicktron.websocket.dto.AGVEntity;
 import com.quicktron.websocket.dto.Car;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,8 +69,10 @@ public class CarMoveController {
         for (WebSocketSession session : sessions) {
             if (session.isOpen()) {
                 try {
-                    String message = "this is a new agv message to " + session.getId();
-                    session.sendMessage(new TextMessage(message));
+                    AGVEntity agvEntity = AGVEntity.getRandom();
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    String agvJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(agvEntity);
+                    session.sendMessage(new TextMessage(agvJson));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
