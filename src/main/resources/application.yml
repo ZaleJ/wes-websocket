@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://${db.url:${host.ip:172.31.214.128}}:${db.port:3306}/?useUnicode=true&useSSL=false&characterEncoding=utf8&allowMultiQueries=true&createDatabaseIfNotExist=true&
+    username: ${db.username:root}
+    password: ${db.password:root123}
+    initial-size: 15
+    max-active: ${db.pool.max.active:100}
+    min-idle: 5
+    max-wait: 60000
+    # ?????????filters????????sql?????'wall'?????
+    filters: stat
+    # ??PSCache??????????PSCache???
+    maxPoolPreparedStatementPerConnectionSize: 50
+    # ??connectProperties?????mergeSql????SQL??
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+    # ????DruidDataSource?????
+    useGlobalDataSourceStat: true
+    # Druid ? Flyway ???
+    wall:
+      config:
+        variantCheck: false
+        noneBaseStatementAllow: true
+        commentAllow: true
+        multiStatementAllow: true
+
+
+logging:
+  level:
+    org:
+      springframework:
+        messaging: DEBUG
+

@@ -34,6 +34,7 @@ public class AgvStatusWebSocketServer extends TextWebSocketHandler {
         String carId = getCarId(session);
         TextMessage textMessage = new TextMessage("this is agv init data for station: " + stationCode + " carId: "+carId);
         AGVEntity agvEntity = AGVEntity.getRandom();
+        agvEntity.setTargetURL("http://www.baidu.com");
 
         ObjectMapper objectMapper = new ObjectMapper();
         String agvJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(agvEntity);

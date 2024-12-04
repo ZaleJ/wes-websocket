@@ -52,6 +52,27 @@ public class CarMoveController {
         }
     }
 
+    @RequestMapping(value = "/updateStationStatus", method = RequestMethod.POST)
+    public void updateStationStatus(@RequestBody AGVEntity agvEntity) {
+        String stationCode = agvEntity.getStationCode();
+        String targetURL = agvEntity.getTargetURL();
+        Set<WebSocketSession> sessions = agvStatusWebSocketServer.getSessions();
+        for (WebSocketSession session : sessions) {
+            if (session.isOpen()) {
+                try {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    String agvJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(agvEntity);
+                    if (session.getUri().toString().contains(agvEntity.getStationCode())) {
+                        session.sendMessage(new TextMessage(agvJson));
+
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 //    @Scheduled(fixedDelay = 10000)
 //    public void sendMessageToAll() {
 //        Set<WebSocketSession> sessions = agvStatusWebSocketServer.getSessions();

@@ -52,8 +52,8 @@
 			alert("请先绑定工作站");
 			return;
 		}
-		socket = new WebSocket('ws://172.31.250.203:8080/websocket/');
-		socketAgv = new WebSocket('ws://172.31.250.203:8080/websocket/agvStatus/'+station_code.value);
+		socket = new WebSocket('ws://localhost:8080/websocket/');
+		socketAgv = new WebSocket('ws://localhost:8080/websocket/agvStatus/'+station_code.value);
 
 		socket.onopen = function(event) {
 			appendMessage('Connected to WebSocket server.');
