@@ -52,20 +52,15 @@
 			alert("请先绑定工作站");
 			return;
 		}
-		socket = new WebSocket('ws://localhost:8080/websocket/');
 		socketAgv = new WebSocket('ws://localhost:8080/websocket/agvStatus/'+station_code.value);
 
-		socket.onopen = function(event) {
-			appendMessage('Connected to WebSocket server.');
-		};
+
 
 		socketAgv.onopen = function(event) {
 			appendMessage('Connected to socketAgv server.');
 		};
 
-		socket.onmessage = function(event) {
-			appendMessage('Received: ' + event.data);
-		};
+
 
 		socketAgv.onmessage = function(event) {
 			var eventData = JSON.parse(event.data);
@@ -74,17 +69,11 @@
 			appendMessage('Received socketAgv: ' + event.data);
 		};
 
-		socket.onclose = function(event) {
-			appendMessage('Disconnected from WebSocket server.');
-		};
 
 		socketAgv.onclose = function(event) {
 			appendMessage('Disconnected from socketAgv WebSocket server.');
 		};
 
-		socket.onerror = function(error) {
-			appendMessage('WebSocket error: ' + error);
-		};
 
 		socketAgv.onerror = function(error) {
 			appendMessage('socketAgv WebSocket error: ' + error);
@@ -94,7 +83,7 @@
 	sendButton.onclick = function() {
 		const message = messageInput.value;
 		if (message) {
-			socket.send(message);
+			socketAgv.send(message);
 			appendMessage('Sent: ' + message);
 			messageInput.value = '';
 		}
