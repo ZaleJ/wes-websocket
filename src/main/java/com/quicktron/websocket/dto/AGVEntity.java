@@ -9,6 +9,8 @@ import java.util.Random;
 @Data
 public class AGVEntity {
     private String robotId;
+    private String stationCode;
+    private String targetURL;
     private BigDecimal distanceToWorkstation;
     private String agvStatus;
     private String transportObjectCode;

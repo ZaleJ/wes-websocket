@@ -47,8 +47,13 @@
 
 	function connectWebSocket() {
 		// Replace 'localhost' with your server's address if different
-		socket = new WebSocket('ws://localhost:8080/websocket');
-		socketAgv = new WebSocket('ws://localhost:8080/websocket/agvStatus/**');
+		var station_code = document.getElementById("meesageInput");
+		if (station_code.value == "") {
+			alert("请先绑定工作站");
+			return;
+		}
+		socket = new WebSocket('ws://172.31.250.203:8080/websocket/');
+		socketAgv = new WebSocket('ws://172.31.250.203:8080/websocket/agvStatus/'+station_code.value);
 
 		socket.onopen = function(event) {
 			appendMessage('Connected to WebSocket server.');
@@ -63,6 +68,9 @@
 		};
 
 		socketAgv.onmessage = function(event) {
+			var eventData = JSON.parse(event.data);
+			window.open(eventData.targetURL, '_blank');
+			console.log(event.data)
 			appendMessage('Received socketAgv: ' + event.data);
 		};
 
@@ -95,5 +103,6 @@
 	// Connect to WebSocket server when the page loads
 	window.onload = connectWebSocket;
 </script>
+<input type="text" id="meesageInput" name="station_code" onblur="connectWebSocket();"/>
 </body>
 </html>

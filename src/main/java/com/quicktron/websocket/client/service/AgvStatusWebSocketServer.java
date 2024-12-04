@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-@ServerEndpoint("/websocket/agvStatus//{carId}")
+@ServerEndpoint("/websocket/agvStatus/{stationCode}")
 public class AgvStatusWebSocketServer extends TextWebSocketHandler {
 
     private static final Set<WebSocketSession> sessions = Collections.newSetFromMap(new ConcurrentHashMap<>());
