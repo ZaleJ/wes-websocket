@@ -2,9 +2,9 @@ spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://${db.url:${host.ip:172.31.214.128}}:${db.port:3306}/?useUnicode=true&useSSL=false&characterEncoding=utf8&allowMultiQueries=true&createDatabaseIfNotExist=true&
+    url: jdbc:mysql://${db.url:${host.ip:localhost}}:${db.port:3306}/?useUnicode=true&useSSL=false&characterEncoding=utf8&allowMultiQueries=true&createDatabaseIfNotExist=true&
     username: ${db.username:root}
-    password: ${db.password:root123}
+    password: ${db.password:}
     initial-size: 15
     max-active: ${db.pool.max.active:100}
     min-idle: 5
